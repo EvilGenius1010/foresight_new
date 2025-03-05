@@ -5,3 +5,7 @@ target
 node_modules
 test-ledger
 .yarn
+
+#next ignore files
+
+app/stakeclone/node_modules
