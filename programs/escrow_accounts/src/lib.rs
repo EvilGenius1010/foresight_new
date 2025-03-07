@@ -115,8 +115,7 @@
 //     winner:bool
 // }
 
-use anchor_lang::prelude::*;
-
+use anchor_lang::{prelude::*, solana_program::lamports};
 
 declare_id!("3FXN3qAS7d2SLm653Q3SW46p3qExwnmLozoDufTMAvLf");
 
@@ -125,32 +124,87 @@ declare_id!("3FXN3qAS7d2SLm653Q3SW46p3qExwnmLozoDufTMAvLf");
 mod non_custodial_escrow{
     use super::*;
    pub fn initialize(ctx:Context<InitializeEscrow>,event_name:String,)->Result<()>{
+
+
     msg!("Escrow Account creation started!");
     let escrow_account = &mut ctx.accounts.escrowaccount;
+
+        escrow_account.pda = escrow_account.key();
+        escrow_account.liquidity_a = 10.0;
+        escrow_account.liquidity_b = 20.0;
+        // escrow_account.total_bets = 0;
+        // escrow_account.bets = Vec::new();
     msg!("Created escrow_accounts' address is {}",escrow_account.key());
     // escrow_account.authority = ctx.accounts.user.key();
     Ok(())
 }
+
+    pub fn place_bet(ctx:Context<InitializeEscrow>,betting_ratio:f32,speculated_winner:bool,amount:f64,sender_addr:Pubkey)->Result<()>{
+        msg!("Bet Placed!");
+        // let escrow_account = &mut ctx.accounts.global_state;
+        let escrowacc = &mut ctx.accounts.escrowaccount;
+        // escrowacc.bets.push(BetSlip{
+        //     better:sender_addr,
+        //     amount:amount,
+        //     speculated_winner:speculated_winner,
+        //     betting_ratio:betting_ratio
+        // });
+
+        if speculated_winner == true{
+            escrowacc.liquidity_a = escrowacc.liquidity_a+amount;
+            // escrowacc.liquidity_b = Some(escrowacc.liquidity_b.unwrap()-amount);
+        }else{
+            escrowacc.liquidity_b = escrowacc.liquidity_b+amount;
+            // escrowacc.liquidity_a = Some(escrowacc.liquidity_a.unwrap()-amount);
+        }
+        
+
+        // // msg!("Bet Placed! and updated the escrow account with bets are {}",escrowacc.bets.len());
+        msg!("Liquidity A is {}",escrowacc.liquidity_a);
+        msg!("Liquidity B is {}",escrowacc.liquidity_b);
+        Ok(())
+    }
 }
 
 #[derive(Accounts)]
 pub struct InitializeEscrow<'info>{
     #[account(init,
         payer=user, // who pays for creation of the account
-        space=8+1+4,//8 for system discriminator, 1 for boolean and 4 for f32 
+        space=EscrowAccountState::LEN,
         seeds=[b"s93koco2lfwojd231",user.key.as_ref()],
         bump
     )]
-    pub escrowaccount:Account<'info,BetSlipShape>,
+    pub escrowaccount:Account<'info,EscrowAccountState>,
     #[account(mut)]
     pub user:Signer<'info>,
-    pub system_program:Program<'info,System>
-
+    pub system_program:Program<'info,System>,
 }
 
 #[account]
-pub struct BetSlipShape{
-    speculated_winner:bool,
-    betting_ratio:f32
-    
+
+pub struct EscrowAccountState{
+    pub pda:Pubkey,
+    pub liquidity_a:f64,
+    pub liquidity_b:f64,
+    pub total_bets:u64,
+    // pub bets:Vec<BetSlip>,
+    // pub total_bets:u64,
+    // pub total_liquidity:u64,
+    // pub total_users:u64,
+    // pub total_winners:u64,
+    // pub total_losers
+    }
+
+// #[account]
+// pub struct BetSlip{
+//     better:Pubkey,
+//     amount:f64,
+//     speculated_winner:bool,
+//     betting_ratio:f32
+// }
+
+impl EscrowAccountState{
+    // pub const LEN: usize = 32+(8+1)+(8+1)+8+32+8+1+4+8;
+    //one more byte for option and extra 8 bytes for discriminator
+    pub const LEN: usize = 32+8+8+8+8;
 }
