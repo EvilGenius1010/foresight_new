@@ -143,12 +143,12 @@ mod non_custodial_escrow{
         msg!("Bet Placed!");
         // let escrow_account = &mut ctx.accounts.global_state;
         let escrowacc = &mut ctx.accounts.escrowaccount;
-        // escrowacc.bets.push(BetSlip{
-        //     better:sender_addr,
-        //     amount:amount,
-        //     speculated_winner:speculated_winner,
-        //     betting_ratio:betting_ratio
-        // });
+        escrowacc.bets.push(BetSlip{
+            better:sender_addr,
+            amount:amount,
+            speculated_winner:speculated_winner,
+            betting_ratio:betting_ratio
+        });
 
         if speculated_winner == true{
             escrowacc.liquidity_a = escrowacc.liquidity_a+amount;
@@ -187,7 +187,7 @@ pub struct EscrowAccountState{
     pub liquidity_a:f64,
     pub liquidity_b:f64,
     pub total_bets:u64,
-    // pub bets:Vec<BetSlip>,
+    pub bets:Vec<BetSlip>,
     // pub total_bets:u64,
     // pub total_liquidity:u64,
     // pub total_users:u64,
@@ -195,16 +195,16 @@ pub struct EscrowAccountState{
     // pub total_losers
     }
 
-// #[account]
-// pub struct BetSlip{
-//     better:Pubkey,
-//     amount:f64,
-//     speculated_winner:bool,
-//     betting_ratio:f32
-// }
+#[account]
+pub struct BetSlip{
+    better:Pubkey,
+    amount:f64,
+    speculated_winner:bool,
+    betting_ratio:f32
+}
 
 impl EscrowAccountState{
     // pub const LEN: usize = 32+(8+1)+(8+1)+8+32+8+1+4+8;
     //one more byte for option and extra 8 bytes for discriminator
-    pub const LEN: usize = 32+8+8+8+8;
+    pub const LEN: usize = 32+8+8+8+8+(45*1000);
 }
