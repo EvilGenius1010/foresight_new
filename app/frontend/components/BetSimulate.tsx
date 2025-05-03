@@ -22,6 +22,8 @@ export default function BetSimulateCard() {
   const balanceB = useBetStats((state) => state.balanceB);
   const setBalanceA = useBetStats((state) => state.setBalanceA);
   const setBalanceB = useBetStats((state) => state.setBalanceB);
+  const setBettingRatioA = useBetStats((state) => state.setBettingRatioA);
+  const setBettingRatioB = useBetStats((state) => state.setBettingRatioB);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -32,20 +34,26 @@ export default function BetSimulateCard() {
 
   function PlaceBets() {
     const betOn = Math.round(Math.random()) == 1 ? "A" : "B";
-    const betAmount = Math.random().toFixed(6) +
-      Math.pow(10, Math.round(Math.random()));
-    if (betOn === "A") {
+    console.log(betOn);
+    const betAmount =
+      Math.random().toFixed(6) + Math.pow(10, Math.round(Math.random()));
+    if (betOn == "A") {
       setBalanceA(
-        (Number(useBetStats.getState().balanceA) + Number(betAmount)).toFixed(
-          6,
-        ),
+        (Number(useBetStats.getState().balanceA) + Number(betAmount)).toFixed(6)
       );
+      if (balanceB != 0 && balanceA != 0) {
+        setBettingRatioA(
+          (useBetStats.getState().balanceA * Number(betAmount)) /
+            useBetStats.getState().balanceB
+        );
+      }
     } else {
       setBalanceB(
-        (Number(useBetStats.getState().balanceB) + Number(betAmount)).toFixed(
-          6,
-        ),
+        (Number(useBetStats.getState().balanceB) + Number(betAmount)).toFixed(6)
       );
+      if (balanceB != 0 && balanceA != 0) {
+        setBettingRatioB((balanceB * Number(betAmount)) / balanceA);
+      }
     }
   }
 
@@ -77,16 +85,14 @@ export default function BetSimulateCard() {
           </Button>
           {/*<PlaceBet />*/}
           <div className="flex flex-col space-x-2">
-            {/*{balanceA}*/}
+            {balanceA} &nbsp;
             {balanceB}
           </div>
         </div>
       </CardContent>
-      {
-        /* <CardFooter>
+      {/* <CardFooter>
     <p>Card Footer</p>
-  </CardFooter> */
-      }
+  </CardFooter> */}
     </Card>
   );
 }
