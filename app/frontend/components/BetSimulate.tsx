@@ -15,15 +15,81 @@ import { useBetStats } from "@/store/SimulationState";
 import { Info } from "lucide-react";
 
 export default function BetSimulateCard() {
-  const bettingratioA = useBetStats((state) => state.bettingRatioA);
-  const balanceA = useBetStats((state) => state.balanceA);
-  const isMature = useBetStats((state) => state.isMature);
-  const bettingratioB = useBetStats((state) => state.bettingRatioB);
-  const balanceB = useBetStats((state) => state.balanceB);
+  const [cards, setCards] = useState<BetCardStruct[]>([]);
+  const bettingratioA = useBetStats.getState().bettingRatioA;
+  const balanceA = useBetStats.getState().balanceA;
+  const isMature = useBetStats.getState().isMature;
+  const bettingratioB = useBetStats.getState().bettingRatioB;
+  const balanceB = useBetStats.getState().balanceB;
   const setBalanceA = useBetStats((state) => state.setBalanceA);
   const setBalanceB = useBetStats((state) => state.setBalanceB);
   const setBettingRatioA = useBetStats((state) => state.setBettingRatioA);
   const setBettingRatioB = useBetStats((state) => state.setBettingRatioB);
+  const setPlacedBets = useBetStats((state) => state.setPlacedBets);
+
+  function PlaceBets() {
+    const betOn = Math.round(Math.random()) == 1 ? "A" : "B";
+    console.log(betOn);
+    const betAmount = Math.random().toFixed(6) +
+      Math.pow(10, Math.round(Math.random()));
+
+    const newBet: BetCardStruct = {
+      name: "AnonUser", // You can make this dynamic
+      amount: Number(betAmount),
+      event: "IND v PAK",
+      party: betOn === "A" ? "India" : "Pakistan",
+    };
+
+    setCards((prev) => [newBet, ...prev]); // Prepend to show latest first
+    console.log(newBet);
+    if (betOn == "A") {
+      // console.log(balanceA, " is balanceA");
+      setBalanceA(
+        (Number(useBetStats.getState().balanceA) + Number(betAmount)).toFixed(
+          6,
+        ),
+      );
+
+      setPlacedBets(newBet);
+
+      if (
+        useBetStats.getState().balanceB !== 0 &&
+        useBetStats.getState().balanceA !== 0
+      ) {
+        setBettingRatioA(
+          Number(
+            (useBetStats.getState().balanceA * Number(betAmount)) /
+              useBetStats.getState().balanceB,
+          ).toFixed(2),
+        );
+      }
+    } else {
+      console.log(balanceB, " is balanceB");
+      setBalanceB(
+        (Number(useBetStats.getState().balanceB) + Number(betAmount)).toFixed(
+          6,
+        ),
+      );
+
+      if (
+        useBetStats.getState().balanceB !== 0 &&
+        useBetStats.getState().balanceA !== 0
+      ) {
+        setBettingRatioB(
+          Number(
+            (useBetStats.getState().balanceB * Number(betAmount)) /
+              useBetStats.getState().balanceA,
+          ).toFixed(2),
+        );
+      }
+    }
+
+    return (
+      <div className="w-full">
+        <BetSimulateSidebar bets={cards} />
+      </div>
+    );
+  }
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -31,32 +97,6 @@ export default function BetSimulateCard() {
     }, 400);
     return () => clearInterval(interval);
   }, []);
-
-  function PlaceBets() {
-    const betOn = Math.round(Math.random()) == 1 ? "A" : "B";
-    console.log(betOn);
-    const betAmount =
-      Math.random().toFixed(6) + Math.pow(10, Math.round(Math.random()));
-    if (betOn == "A") {
-      setBalanceA(
-        (Number(useBetStats.getState().balanceA) + Number(betAmount)).toFixed(6)
-      );
-      if (balanceB != 0 && balanceA != 0) {
-        setBettingRatioA(
-          (useBetStats.getState().balanceA * Number(betAmount)) /
-            useBetStats.getState().balanceB
-        );
-      }
-    } else {
-      setBalanceB(
-        (Number(useBetStats.getState().balanceB) + Number(betAmount)).toFixed(6)
-      );
-      if (balanceB != 0 && balanceA != 0) {
-        setBettingRatioB((balanceB * Number(betAmount)) / balanceA);
-      }
-    }
-  }
-
   return (
     <Card>
       <CardHeader>
@@ -90,9 +130,11 @@ export default function BetSimulateCard() {
           </div>
         </div>
       </CardContent>
-      {/* <CardFooter>
+      {
+        /* <CardFooter>
     <p>Card Footer</p>
-  </CardFooter> */}
+  </CardFooter> */
+      }
     </Card>
   );
 }
@@ -110,6 +152,7 @@ export function PlaceBet() {
 
 import React from "react";
 import Joyride, { CallBackProps, Step } from "react-joyride";
+import BetSimulateSidebar, { BetCardStruct } from "./BetSimulateSidebar.tsx";
 
 interface TutorialProps {
   steps: Step[];
