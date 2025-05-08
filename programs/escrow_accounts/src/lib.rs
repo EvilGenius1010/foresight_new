@@ -107,6 +107,10 @@
 // }
 
 use anchor_lang::{prelude::*, solana_program::lamports};
+pub mod escrow_acc;
+// use escrow_acc::*;
+use crate::escrow_acc::*;
+
 
 declare_id!("3FXN3qAS7d2SLm653Q3SW46p3qExwnmLozoDufTMAvLf");
 
@@ -115,8 +119,12 @@ mod escrow_accounts {
     use super::*;
 
     ///escrow account creation
-    pub fn initialize(ctx: Context<InitializeEscrow>, event_name: String, bump: u8) -> Result<()> {
-        msg!("Escrow Account creation started!");
+    pub fn initialize(
+        ctx: Context<InitializeBetEvent>,
+        event_name: String,
+        bump: u8,
+    ) -> Result<()> {
+        msg!("Bet Account creation started!");
         let escrow_account = &mut ctx.accounts.escrowaccount;
         escrow_account.bump = bump;
         escrow_account.pda = escrow_account.key();
@@ -128,6 +136,9 @@ mod escrow_accounts {
             "Created escrow_accounts' address is {}",
             escrow_account.key()
         );
+
+        msg!("Starting creation of escrow account");
+
         // escrow_account.authority = ctx.accounts.user.key();
         Ok(())
     }
@@ -143,7 +154,7 @@ mod escrow_accounts {
         let escrowacc = &mut ctx.accounts.escrowaccount;
 
         // Optional: Check max bets limit
-        if escrowacc.bets.len() >= EscrowAccountState::MAX_BETS {
+        if escrowacc.bets.len() >= BetEventInfo::MAX_BETS {
             return err!(ErrorCode::MaxBetsReached);
         }
 
@@ -163,18 +174,46 @@ mod escrow_accounts {
         escrowacc.total_bets += 1;
         Ok(())
     }
+
+    pub fn create_payment_receipt(
+        ctx: Context<EscrowAccountState>,
+        betslip_ref: Pubkey,
+        amount: u64,
+    ) -> Result<()> {
+        create_payment_receipt_p(
+            ctx,
+            betslip_ref,
+            amount,
+        )
+    }
+
+    pub fn payout_if_win(
+        ctx: Context<PayoutIfWin>,
+        correct_winner: bool,
+        speculated_winner: bool,
+    ) -> Result<()> {
+        payout_if_win_p(
+            ctx,
+            correct_winner,
+            speculated_winner,
+        )
+    }
+
+
+
+
     // fn distribute_winnings(ctx: Context<InitializeEscrow>, event_name: string) {}
 }
 
 #[derive(Accounts)]
-pub struct InitializeEscrow<'info> {
+pub struct InitializeBetEvent<'info> {
     #[account(init,
         payer=user, // who pays for creation of the account
-        space=EscrowAccountState::LEN+512,
+        space=BetEventInfo::LEN+10,
         seeds=[b"s93koco2lfwojd231",user.key.as_ref()],
         bump
     )]
-    pub escrowaccount: Account<'info, EscrowAccountState>,
+    pub escrowaccount: Account<'info, BetEventInfo>,
     #[account(mut)]
     pub user: Signer<'info>,
     pub system_program: Program<'info, System>,
@@ -182,7 +221,7 @@ pub struct InitializeEscrow<'info> {
 
 #[account]
 ///account to store state of escrow account.
-pub struct EscrowAccountState {
+pub struct BetEventInfo {
     /// Stores the pda of this escrow account.
     pub pda: Pubkey,
 
@@ -204,6 +243,11 @@ pub struct EscrowAccountState {
                   // pub total_users:u64,
                   // pub total_winners:u64,
                   // pub total_losers
+
+
+    /// Address at which escrow account is created. 
+    escrow_account_ref: Pubkey,
+    
 }
 
 #[account]
@@ -221,6 +265,7 @@ pub struct BetSlip {
 
     /// Betting ratio at the time of bet.
     betting_ratio: f32,
+
 }
 
 impl BetSlip {
@@ -228,7 +273,7 @@ impl BetSlip {
     pub const LEN: usize = 32 + 8 + 1 + 4 + 3;
 }
 
-impl EscrowAccountState {
+impl BetEventInfo {
     // pub const LEN: usize = 32+(8+1)+(8+1)+8+32+8+1+4+8;
     //one more byte for option and extra 8 bytes for discriminator
 
@@ -252,7 +297,7 @@ impl EscrowAccountState {
 #[derive(Accounts)]
 pub struct PlaceBet<'info> {
     #[account(mut, seeds = [b"s93koco2lfwojd231", user.key().as_ref()], bump = escrowaccount.bump)]
-    pub escrowaccount: Account<'info, EscrowAccountState>,
+    pub escrowaccount: Account<'info, BetEventInfo>,
     #[account(mut)]
     pub user: Signer<'info>,
 }
