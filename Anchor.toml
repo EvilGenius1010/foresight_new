@@ -5,16 +5,13 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
-bet_logic_manager = "85VYGYPaPtisYzoFiQwNu9YLquxzmGstnsebNXzFrPxD"
 escrow_accounts = "3FXN3qAS7d2SLm653Q3SW46p3qExwnmLozoDufTMAvLf"
-simulate_bet = "5k5YNAN1kh4rMjz4cN9XsSsQNFsSs1Zb52Euqay7kG8J"
-stake_program = "GAiXkYDpamSbSYAH6c4iffj8GjNbbuHQoBAhCcWtG9x3"
 
 [registry]
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "Localnet"
+cluster = "devnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]
