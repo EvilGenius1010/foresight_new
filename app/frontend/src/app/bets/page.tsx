@@ -1,5 +1,5 @@
 "use client";
-import { Card } from "../../components/ui/card.tsx";
+import { Card } from "../../components/ui/card";
 import {
   clusterApiUrl,
   Connection,
@@ -9,6 +9,7 @@ import {
   Transaction,
 } from "@solana/web3.js";
 import { useState } from "react";
+import GlassMorphicCard from "../../../components/GlassCard";
 
 // Transaction logic
 async function sendSolTransaction(amountSol: number, toAddress: string) {
@@ -66,17 +67,22 @@ export default function DisplayBets() {
 
   return (
     <>
-      <h1 className="text-5xl absolute left-72 pt-32">Available Bets</h1>
+    <div className="flex flex-col w-screen pl-72">
+      <h1 className="text-5xl pt-32">Available Bets</h1>
       <Card className="w-96 h-56 flex flex-col items-center justify-center m-10 shadow-lg p-4">
         <p className="text-xl mb-4">Bet Entry: 5 SOL</p>
         <button
           onClick={handlePayment}
           className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition"
-        >
+          >
           {loading ? "Sending..." : "Enter Bet"}
         </button>
         {success && <p className="mt-3 text-green-500">{success}</p>}
       </Card>
+          <div className="max-w-3xl">
+      <GlassMorphicCard title="India v Pakistan" description="womp womp"/>
+          </div>
+          </div>
     </>
   );
 }

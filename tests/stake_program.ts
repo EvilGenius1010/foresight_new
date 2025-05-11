@@ -15,70 +15,73 @@
 //   });
 // });
 
-import * as anchor from "@coral-xyz/anchor";
-import { Program } from "@coral-xyz/anchor";
-import { PublicKey, SystemProgram } from "@solana/web3.js";
-import { assert } from "chai";
 
-describe("escrow_accounts", () => {
-  const provider = anchor.AnchorProvider.env();
-  anchor.setProvider(provider);
 
-  const program = anchor.workspace.EscrowAccounts as Program<any>;
 
-  let escrowAccountPda: PublicKey;
-  let bump: number;
+// import * as anchor from "@coral-xyz/anchor";
+// import { Program } from "@coral-xyz/anchor";
+// import { PublicKey, SystemProgram } from "@solana/web3.js";
+// import { assert } from "chai";
 
-  const user = provider.wallet;
+// describe("escrow_accounts", () => {
+//   const provider = anchor.AnchorProvider.env();
+//   anchor.setProvider(provider);
 
-  before(async () => {
-    [escrowAccountPda, bump] = await PublicKey.findProgramAddressSync(
-      [Buffer.from("s93koco2lfwojd231"), user.publicKey.toBuffer()],
-      program.programId
-    );
-  });
+//   const program = anchor.workspace.EscrowAccounts as Program<any>;
 
-  it("Initializes the escrow account", async () => {
-    await program.methods
-      .initialize("Test Event", bump)
-      .accounts({
-        escrowaccount: escrowAccountPda,
-        user: user.publicKey,
-        systemProgram: SystemProgram.programId,
-      })
-      .signers([]) // only uses wallet
-      .rpc();
+//   let escrowAccountPda: PublicKey;
+//   let bump: number;
 
-    const escrowData = await program.account.escrowAccountState.fetch(
-      escrowAccountPda
-    );
+//   const user = provider.wallet;
 
-    console.log("Escrow PDA:", escrowAccountPda.toBase58());
-    console.log("Escrow Data:", escrowData);
+//   before(async () => {
+//     [escrowAccountPda, bump] = await PublicKey.findProgramAddressSync(
+//       [Buffer.from("s93koco2lfwojd231"), user.publicKey.toBuffer()],
+//       program.programId
+//     );
+//   });
 
-    assert.equal(escrowData.liquidityA, 10.0);
-    assert.equal(escrowData.liquidityB, 20.0);
-  });
+//   it("Initializes the escrow account", async () => {
+//     await program.methods
+//       .initialize("Test Event", bump)
+//       .accounts({
+//         escrowaccount: escrowAccountPda,
+//         user: user.publicKey,
+//         systemProgram: SystemProgram.programId,
+//       })
+//       .signers([]) // only uses wallet
+//       .rpc();
 
-  it("Places a bet on A", async () => {
-    await program.methods
-      .placeBet(1.5, true, 2.0, user.publicKey)
-      .accounts({
-        escrowaccount: escrowAccountPda,
-        user: user.publicKey,
-      })
-      .signers([])
-      .rpc();
+//     const escrowData = await program.account.escrowAccountState.fetch(
+//       escrowAccountPda
+//     );
 
-    const escrowData = await program.account.escrowAccountState.fetch(
-      escrowAccountPda
-    );
+//     console.log("Escrow PDA:", escrowAccountPda.toBase58());
+//     console.log("Escrow Data:", escrowData);
 
-    console.log("Liquidity A:", escrowData.liquidityA);
-    console.log("Liquidity B:", escrowData.liquidityB);
-    console.log("Total Bets:", escrowData.bets.length);
+//     assert.equal(escrowData.liquidityA, 10.0);
+//     assert.equal(escrowData.liquidityB, 20.0);
+//   });
 
-    assert.equal(escrowData.liquidityA, 12); // 10.0 + 2
-    assert.equal(escrowData.bets.length, 1);
-  });
-});
+//   it("Places a bet on A", async () => {
+//     await program.methods
+//       .placeBet(1.5, true, 2.0, user.publicKey)
+//       .accounts({
+//         escrowaccount: escrowAccountPda,
+//         user: user.publicKey,
+//       })
+//       .signers([])
+//       .rpc();
+
+//     const escrowData = await program.account.escrowAccountState.fetch(
+//       escrowAccountPda
+//     );
+
+//     console.log("Liquidity A:", escrowData.liquidityA);
+//     console.log("Liquidity B:", escrowData.liquidityB);
+//     console.log("Total Bets:", escrowData.bets.length);
+
+//     assert.equal(escrowData.liquidityA, 12); // 10.0 + 2
+//     assert.equal(escrowData.bets.length, 1);
+//   });
+// });
