@@ -1,10 +1,10 @@
 
-type OngoingBetsProps={
-    Event:string,
-    PartyA:string,
-    PartyB:string,
-    PayoutRatio:number
-}
+// type OngoingBetsProps={
+//     Event:string,
+//     PartyA:string,
+//     PartyB:string,
+//     PayoutRatio:number
+// }
 
 export default function OngoingBetsDisplay() {
     return(

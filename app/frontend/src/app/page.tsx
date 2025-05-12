@@ -30,9 +30,10 @@
 //     </>
 //   )
 // }
+
 import Link from "next/link";
 export default function Home() {
-  return (
+  return (<>
     <div className="bg-dark text-white min-h-screen font-sans">
       {/* Header */}
       <header className="flex justify-between items-center p-6">
@@ -62,31 +63,60 @@ export default function Home() {
         <p className="text-lg text-gray-300 mb-8">
           Join the smartest prediction market in Web3
         </p>
-        <Link href="/bets">
-          <button className="px-6 py-3 rounded-full bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 transition">
+        <div className="flex flex-row justify-center space-x-4">
+          <Link href="/bets">
+          <button className="px-6 py-3 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 transition">
             Get Started
           </button>
+          </Link>
+        <Link href="/simulatebet">
+          <button className="px-6 py-3 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 transition">
+            Watch it Live
+          </button>
         </Link>
+        </div>
       </section>
 
       {/* Features */}
       <section id="markets" className="grid md:grid-cols-3 gap-6 px-6 py-16">
-        {["Non Custodial Wallets", "Full Transparency", "Secure"].map(
-          (title) => (
+
+
             <div
-              key={title}
               className="p-6 rounded-2xl bg-white/10 backdrop-blur-md border border-white/10 shadow-md"
-            >
-              <h3 className="font-grotesk text-2xl mb-2">{title}</h3>
+              >
+              <h3 className="font-grotesk text-2xl mb-2">Non Custodial Wallets</h3>
               <p className="text-sm text-gray-300">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                Funds are managed by code, not by us.
               </p>
             </div>
-          ),
-        )}
-      </section>
 
-      {/* Testimonials */}
+             <div
+              className="p-6 rounded-2xl bg-white/10 backdrop-blur-md border border-white/10 shadow-md"
+              >
+              <h3 className="font-grotesk text-2xl mb-2">Full Transparency</h3>
+              <p className="text-sm text-gray-300">
+                Anyone can audit the smart contracts and verify the results.
+              </p>
+              </div>
+
+               <div
+              className="p-6 rounded-2xl bg-white/10 backdrop-blur-md border border-white/10 shadow-md"
+              >
+              <h3 className="font-grotesk text-2xl mb-2">Create your own bets</h3>
+              <p className="text-sm text-gray-300">
+                Create your own bets and earn money from them.
+              </p>
+            </div>
+            
+
+
+
+
+            
+           
+      </section>
+{/* 
+
       <section id="testimonials" className="py-16 px-6">
         <h3 className="font-grotesk text-3xl text-center mb-10">
           What our users say
@@ -94,20 +124,21 @@ export default function Home() {
         <div className="grid md:grid-cols-3 gap-6">
           {[1, 2, 3].map((i) => (
             <div
-              key={i}
+            key={i}
               className="bg-white/10 backdrop-blur-md border border-white/10 p-4 rounded-xl text-sm text-gray-200"
-            >
+              >
               <p>"This is the best prediction platform I've ever used!"</p>
               <p className="mt-4 text-right text-xs">– User #{i}</p>
             </div>
           ))}
         </div>
-      </section>
+      </section> */}
 
       {/* Footer */}
       <footer className="text-center p-6 text-gray-400 text-sm">
-        &copy; 2025 PredictX. All rights reserved.
+        &copy; 2025 Foresight. All rights reserved.
       </footer>
     </div>
+              </>
   );
 }

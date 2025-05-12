@@ -10,15 +10,14 @@ import {
 import { Card, CardContent } from "../src/components/ui/card";
 import { useBetStats } from "../src/store/SimulationState";
 
-export default function BetSimulateSidebar({
-  // bets,
-}: {
-  bets: BetCardStruct[];
-}) {
+
+export default function BetSimulateSidebar() {
   const placedBets = useBetStats((state) => state.placedBets);
 
+
   return (
-    <Sidebar >
+
+    <Sidebar className="mx-48">
       <SidebarHeader  />
       <SidebarContent >
         <SidebarGroup />

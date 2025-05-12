@@ -15,6 +15,8 @@ import GlassMorphicCard from "../../../components/GlassCard";
 async function sendSolTransaction(amountSol: number, toAddress: string) {
   const connection = new Connection(clusterApiUrl("devnet"), "confirmed");
 
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  //@ts-ignore
   const provider = window.solana;
   if (!provider?.isPhantom) {
     alert("Phantom wallet not found!");

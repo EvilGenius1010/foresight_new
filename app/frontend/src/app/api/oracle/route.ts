@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { Connection, PublicKey } from "@solana/web3.js";
+import { Connection} from "@solana/web3.js";
 import {
   getPythProgramKeyForCluster,
   PythHttpClient,
