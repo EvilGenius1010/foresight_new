@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 // import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-import { Poppins } from "next/font/google";
+// import { Poppins } from "next/font/google";
 // const geistSans = Geist({
 //   variable: "--font-geist-sans",
 //   subsets: ["latin"],
@@ -13,10 +13,10 @@ import { Poppins } from "next/font/google";
 //   subsets: ["latin"],
 // });
 
-export const poppinsRegular = Poppins({
-  subsets: ["latin"],
-  weight: "400",
-});
+// export const poppinsRegular = Poppins({
+//   subsets: ["latin"],
+//   weight: "400",
+// });
 
 import { Inter, Space_Grotesk } from "next/font/google";
 
