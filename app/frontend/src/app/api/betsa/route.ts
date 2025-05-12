@@ -1,7 +1,7 @@
 
 import * as anchor from "@coral-xyz/anchor";
 import { Connection, PublicKey } from "@solana/web3.js";
-import idl from "../../../../../../target/idl/escrow_accounts.json"; // Your program's IDL
+import idl from "@/../escrow_accounts.json"; // Your program's IDL
 
 import fs from "fs";
 import { NextRequest, NextResponse } from "next/server";
