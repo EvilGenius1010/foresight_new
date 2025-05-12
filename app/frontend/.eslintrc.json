@@ -4,7 +4,7 @@
       "files": ["components/BetSimulate.tsx"],
       "rules": {
          "react-hooks/rules-of-hooks": "off",
-        "no-unused-vars": "off"
+        "@typescript-eslint/no-unused-vars": "off"
       } 
     }
   ]
