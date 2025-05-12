@@ -33,12 +33,12 @@ type CompetitiveBetsStruct = {
   liveStats: string | null;
 };
 
-type UpdateCompBetsStatsStruct = {
-  isAorB: boolean;
-  updatedTotalBets: number;
-  updatedTotalMoney: number;
-  updatedBettingRatio: number;
-};
+// type UpdateCompBetsStatsStruct = {
+//   isAorB: boolean;
+//   updatedTotalBets: number;
+//   updatedTotalMoney: number;
+//   updatedBettingRatio: number;
+// };
 
 export const useAllBetsStats = create<AllBetsInfoStruct>((set) => ({
   competitiveBets: [],
@@ -54,6 +54,6 @@ export const useAllBetsStats = create<AllBetsInfoStruct>((set) => ({
       currencyBets: [...state.currencyBets, ...newCurrencyBets],
     })),
 
-  setCompBetsStats: (updateCompStats: UpdateCompBetsStatsStruct) =>
-    set((state) => ({})),
+  // setCompBetsStats: (updateCompStats: UpdateCompBetsStatsStruct) =>
+  //   set((state) => ({})),
 }));
