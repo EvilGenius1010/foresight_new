@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { BetCardStruct } from "../../components/BetSimulateSidebar.tsx";
+import { BetCardStruct } from "../../components/BetSimulateSidebar";
 
 type BetEvent = {
   bettingRatioA: number;
