@@ -1,5 +1,5 @@
 import { SidebarProvider } from "@/components/ui/sidebar";
-import BetSimulateSidebar from "../../../components/BetSimulateSidebar.tsx";
+import BetSimulateSidebar from "../../../components/BetSimulateSidebar";
 import React from "react";
 
 export default function BetSimulationLayout({
@@ -9,7 +9,7 @@ export default function BetSimulationLayout({
     <SidebarProvider>
       <div className="flex min-h-screen">
         {/* Here's the sidebar */}
-        <BetSimulateSidebar bets={[]} />
+        <BetSimulateSidebar  />
 
         {/* Main content */}
         <main className="flex-1 flex justify-center items-center">

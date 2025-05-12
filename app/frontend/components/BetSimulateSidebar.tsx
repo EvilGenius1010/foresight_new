@@ -7,20 +7,19 @@ import {
   SidebarGroup,
   SidebarHeader,
 } from "@/components/ui/sidebar";
-import { Card, CardContent } from "../src/components/ui/card.tsx";
-import { useBetStats } from "../src/store/SimulationState.tsx";
+import { Card, CardContent } from "../src/components/ui/card";
+import { useBetStats } from "../src/store/SimulationState";
 
-export default function BetSimulateSidebar({
-  bets,
-}: {
-  bets: BetCardStruct[];
-}) {
+
+export default function BetSimulateSidebar() {
   const placedBets = useBetStats((state) => state.placedBets);
 
+
   return (
-    <Sidebar>
-      <SidebarHeader className="bg-slate-800" />
-      <SidebarContent className="bg-blue-700">
+
+    <Sidebar className="mx-48">
+      <SidebarHeader  />
+      <SidebarContent >
         <SidebarGroup />
         <SidebarGroup />
         {placedBets.map((bet, index) => (
@@ -45,8 +44,8 @@ export type BetCardStruct = {
 export function NewBetCard({ props }: Readonly<{ props: BetCardStruct }>) {
   return (
     <>
-      <Card>
-        <CardContent className="grid-cols-2 gap-2 space-x-2">
+      <Card className="p-6 text-white rounded-2xl bg-white/10 backdrop-blur-[12px] border border-white/10 shadow-md" style={{WebkitBackdropFilter: "blur(10px)"}}>
+        <CardContent >
           <div>{props.event}</div>
           <div>{props.amount}</div>
           <div>{props.name}</div>

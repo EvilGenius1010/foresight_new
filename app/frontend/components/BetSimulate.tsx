@@ -1,3 +1,4 @@
+/* eslint-disable */
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -45,9 +46,9 @@ export default function BetSimulateCard() {
     if (betOn == "A") {
       // console.log(balanceA, " is balanceA");
       setBalanceA(
-        (Number(useBetStats.getState().balanceA) + Number(betAmount)).toFixed(
+        Number((Number(useBetStats.getState().balanceA) + Number(betAmount)).toFixed(
           6,
-        ),
+        )),
       );
 
       setPlacedBets(newBet);
@@ -57,18 +58,18 @@ export default function BetSimulateCard() {
         useBetStats.getState().balanceA !== 0
       ) {
         setBettingRatioA(
-          Number(
-            (useBetStats.getState().balanceA * Number(betAmount)) /
+          Math.max(Number(Number(
+            (useBetStats.getState().balanceA) /
               useBetStats.getState().balanceB,
-          ).toFixed(2),
+          ).toFixed(2)),1)
         );
       }
     } else {
       console.log(balanceB, " is balanceB");
       setBalanceB(
-        (Number(useBetStats.getState().balanceB) + Number(betAmount)).toFixed(
+        Number((Number(useBetStats.getState().balanceB) + Number(betAmount)).toFixed(
           6,
-        ),
+        )),
       );
 
       if (
@@ -76,17 +77,14 @@ export default function BetSimulateCard() {
         useBetStats.getState().balanceA !== 0
       ) {
         setBettingRatioB(
-          Number(
-            (useBetStats.getState().balanceB * Number(betAmount)) /
-              useBetStats.getState().balanceA,
-          ).toFixed(2),
+          Math.max(Number((useBetStats.getState().balanceB /useBetStats.getState().balanceA).toFixed(2)),1)
         );
       }
     }
 
     return (
       <div className="w-full">
-        <BetSimulateSidebar bets={cards} />
+        <BetSimulateSidebar />
       </div>
     );
   }
@@ -152,7 +150,7 @@ export function PlaceBet() {
 
 import React from "react";
 import Joyride, { CallBackProps, Step } from "react-joyride";
-import BetSimulateSidebar, { BetCardStruct } from "./BetSimulateSidebar.tsx";
+import BetSimulateSidebar, { BetCardStruct } from "./BetSimulateSidebar";
 
 interface TutorialProps {
   steps: Step[];

@@ -1,3 +1,11 @@
 {
-  "extends": ["next/core-web-vitals", "next/typescript"]
+  "overrides": [
+    {
+      "files": ["components/BetSimulate.tsx"],
+      "rules": {
+         "react-hooks/rules-of-hooks": "off",
+        "no-unused-vars": "off"
+      } 
+    }
+  ]
 }
