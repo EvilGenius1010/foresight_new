@@ -1,0 +1,292 @@
+{
+  "address": "2J8ZgvrSQiddmh39LYKBWd2anHttAd7BKV9JhYjVonAH",
+  "metadata": {
+    "name": "escrow_accounts",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Created with Anchor"
+  },
+  "instructions": [
+    {
+      "name": "initialize",
+      "docs": [
+        "escrow account creation"
+      ],
+      "discriminator": [
+        175,
+        175,
+        109,
+        31,
+        13,
+        152,
+        155,
+        237
+      ],
+      "accounts": [
+        {
+          "name": "event_info_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  105,
+                  110,
+                  105,
+                  116,
+                  98,
+                  101,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "user"
+              }
+            ]
+          }
+        },
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "event_name",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "place_bet",
+      "discriminator": [
+        222,
+        62,
+        67,
+        220,
+        63,
+        166,
+        126,
+        33
+      ],
+      "accounts": [
+        {
+          "name": "escrowaccount",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  105,
+                  110,
+                  105,
+                  116,
+                  98,
+                  101,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "user"
+              }
+            ]
+          }
+        },
+        {
+          "name": "escrow_vault",
+          "writable": true
+        },
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "betting_ratio",
+          "type": "f32"
+        },
+        {
+          "name": "speculated_winner",
+          "type": "bool"
+        },
+        {
+          "name": "amount",
+          "type": "f64"
+        },
+        {
+          "name": "sender_addr",
+          "type": "pubkey"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "BetEventInfo",
+      "discriminator": [
+        133,
+        144,
+        16,
+        62,
+        13,
+        147,
+        204,
+        120
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "MaxBetsReached",
+      "msg": "Maximum number of bets reached."
+    }
+  ],
+  "types": [
+    {
+      "name": "BetEventInfo",
+      "docs": [
+        "account to store state of Bets and everything related to it."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "pda",
+            "docs": [
+              "Stores the pda of this escrow account."
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "liquidity_a",
+            "docs": [
+              "Total money bet on party A."
+            ],
+            "type": "f64"
+          },
+          {
+            "name": "liquidity_b",
+            "docs": [
+              "Total money bet on party B."
+            ],
+            "type": "f64"
+          },
+          {
+            "name": "total_bets",
+            "docs": [
+              "Total no of bets placed combined."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "bets",
+            "docs": [
+              "History of all bets placed."
+            ],
+            "type": {
+              "vec": {
+                "defined": {
+                  "name": "BetSlip"
+                }
+              }
+            }
+          },
+          {
+            "name": "bump",
+            "docs": [
+              "Bump of pda derived"
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "escrow_account_ref",
+            "docs": [
+              "Address at which escrow account is created."
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "escrow_account_ref_bump",
+            "type": "u8"
+          },
+          {
+            "name": "betting_ratio_a",
+            "docs": [
+              "betting ratio of party A"
+            ],
+            "type": "f32"
+          },
+          {
+            "name": "betting_ratio_b",
+            "docs": [
+              "betting ratio of party B"
+            ],
+            "type": "f32"
+          },
+          {
+            "name": "event_name",
+            "docs": [
+              "Name of the event"
+            ],
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "name": "BetSlip",
+      "docs": [
+        "Struct for each bet placed."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "better",
+            "docs": [
+              "Public Key of wallet which placed the bet."
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "docs": [
+              "The amount bet."
+            ],
+            "type": "f64"
+          },
+          {
+            "name": "speculated_winner",
+            "docs": [
+              "The winner speculated by the better."
+            ],
+            "type": "bool"
+          },
+          {
+            "name": "betting_ratio",
+            "docs": [
+              "Betting ratio at the time of bet."
+            ],
+            "type": "f32"
+          }
+        ]
+      }
+    }
+  ]
+}
