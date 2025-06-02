@@ -10,7 +10,7 @@ use anchor_lang::{prelude::*, solana_program::{lamports,system_instruction}};
 
 pub mod math;
 pub mod helper_fns;
-use crate::{math::*,helper_fns::*};
+use crate::{helper_fns::*};
 pub mod CONSTANTS;
 declare_id!("g7gez3AhY2jHNPgsmZVuKA5ASuvJFydHxBeLQX1Nwge");
 
@@ -23,7 +23,7 @@ mod escrow_accounts {
 
 
     ///escrow account creation
-    pub fn initialize(
+    pub fn initialize( //change to initialize_root which can be run only by creator of program.
         ctx: Context<InitializeBetEvent>,
         event_name: String,
     ) -> Result<()> {
@@ -39,6 +39,7 @@ mod escrow_accounts {
         escrow_account.betting_ratio_b = 0.5;
         escrow_account.event_name = event_name;
         escrow_account.total_bets = 0;
+        escrow_account.nonce = 0;
         escrow_account.bets = Vec::new();
         // escrow_account.total_bets = 0;
         // escrow_account.bets = Vec::new();
@@ -72,24 +73,31 @@ mod escrow_accounts {
         speculated_winner: bool,
         amount: f64,
         sender_addr: Pubkey,
+        nonce:u8
     ) -> Result<()> {
         msg!("Placing bet...");
         let escrowacc = &mut ctx.accounts.escrowaccount;
 
-        // Optional: Check max bets limit
-        if escrowacc.bets.len() >= BetEventInfo::MAX_BETS {
-            return err!(ErrorCode::MaxBetsReached);
-        }
+        // // Optional: Check max bets limit
+        // if escrowacc.bets.len() > BetEventInfo::MAX_BETS {
+        //     return err!(ErrorCode::MaxBetsReached);
+        // }
 
-          let ix = system_instruction::transfer(
+        //push to base pda account, else push bet data to latest pda
+
+        
+
+
+
+        let ix = system_instruction::transfer(
         &ctx.accounts.user.key(),
         &ctx.accounts.escrow_vault.key(),
         2,
     );
 
     //deduct rent amount from each bet
-    msg!("Deducting Rent!");
-    let rent_deduction_amt = calculate_rent(BetSlip::LEN);
+    // msg!("Deducting Rent!");
+    // let rent_deduction_amt = calculate_rent(BetSlip::LEN);
 
     
 
@@ -109,12 +117,32 @@ mod escrow_accounts {
         //Check if bet placed successfully or not.
         
 
-        escrowacc.bets.push(BetSlip {
+        // escrowacc.bets.push(BetSlip {
+        //     better: sender_addr,
+        //     amount,
+        //     speculated_winner,
+        //     betting_ratio,
+        // });
+
+        if escrowacc.nonce >0{
+           //send data to current pda being used.
+
+           let curr_pda = Pubkey::find_program_address(
+            &[CONSTANTS::place_bet_bytes,ctx.accounts.user.key().as_ref(),&[nonce]],ctx.program_id);
+
+            curr_pda.bets.push(BetSlip {
             better: sender_addr,
             amount,
             speculated_winner,
             betting_ratio,
-        });
+            })
+
+        //     let (vault_pda, _vault_bump) = Pubkey::find_program_address(
+        //     &[b"escrow_vault", ctx.accounts.user.key().as_ref()],
+        //     ctx.program_id,
+        // );
+        }
+
 
         if speculated_winner {
             escrowacc.liquidity_a += amount;
@@ -219,7 +247,11 @@ pub struct BetEventInfo {
     
     /// Name of the event
     event_name: String,
+
+    /// nonce to be passed for new pda creation
+    nonce: u8 
 }
+
 
 impl BetEventInfo {
     // pub const LEN: usize = 32+(8+1)+(8+1)+8+32+8+1+4+8;
@@ -229,10 +261,11 @@ impl BetEventInfo {
     // pub const LEN: usize = 32 + 8 + 8 + 8 + 8 + (45 * 1000);
 
     /// Maximum bets allowed per account.
-    pub const MAX_BETS: usize = 6;
+    //change back to some default value which minimizes new pda creation.
+    pub const MAX_BETS: usize = 3;
 
     /// discriminator(8)+pda(32)+liquidity_a(8)+liquidity_b(8)+idk(4)+betslips+bump(1)+escrow_account_ref(32)+escrow_account_ref_bump(1)
-    /// +betting_ratio_a(2)+betting_ratio_b(2)+event_name(8)
+    /// +betting_ratio_a(2)+betting_ratio_b(2)+event_name(8)+nonce(0.5)
     pub const LEN: usize = 8 // discriminator
         + 32
         + 8 
@@ -245,6 +278,7 @@ impl BetEventInfo {
         + 4
         + 4
         + 8
+        + 1
         + (Self::MAX_BETS * BetSlip::LEN); // vec prefix + contents
 }
 
@@ -278,8 +312,10 @@ impl BetSlip {
 
 /// Context parameter for placing a bet.
 #[derive(Accounts)]
+#[instruction(nonce:u8)]
 pub struct PlaceBet<'info> {
-    #[account(mut, seeds = [b"initbet", user.key.as_ref()], bump = escrowaccount.bump)]
+    //std::slice::from_ref(&escrowaccount.nonce)
+    #[account(mut, seeds = [CONSTANTS::place_bet_bytes, user.key.as_ref(),&[nonce]], bump = escrowaccount.bump)]
     pub escrowaccount: Account<'info, BetEventInfo>,
 
     /// CHECK: This is a raw account used to transfer lamports into it. It is expected to be a PDA owned by this program.
