@@ -117,30 +117,31 @@ mod escrow_accounts {
         //Check if bet placed successfully or not.
         
 
-        // escrowacc.bets.push(BetSlip {
-        //     better: sender_addr,
-        //     amount,
-        //     speculated_winner,
-        //     betting_ratio,
-        // });
+        
+        
+                //    let curr_pda = Pubkey::find_program_address(
+                //     &[CONSTANTS::place_bet_bytes,ctx.accounts.user.key().as_ref(),&[nonce]],ctx.program_id);
+        
+                //     curr_pda.bets.push(BetSlip {
+                //     better: sender_addr,
+                //     amount,
+                //     speculated_winner,
+                //     betting_ratio,
+                //     })
 
-        if escrowacc.nonce >0{
+        if escrowacc.bets.len()>=BetEventInfo::MAX_BETS{
+            escrowacc.nonce+=1;
+            msg!("Nonce increased by 1 and is now,{} \n",escrowacc.nonce);
            //send data to current pda being used.
 
-           let curr_pda = Pubkey::find_program_address(
-            &[CONSTANTS::place_bet_bytes,ctx.accounts.user.key().as_ref(),&[nonce]],ctx.program_id);
-
-            curr_pda.bets.push(BetSlip {
+        escrowacc.bets.push(BetSlip {
             better: sender_addr,
             amount,
             speculated_winner,
             betting_ratio,
-            })
+        });
+        msg!("data pushed to account!");
 
-        //     let (vault_pda, _vault_bump) = Pubkey::find_program_address(
-        //     &[b"escrow_vault", ctx.accounts.user.key().as_ref()],
-        //     ctx.program_id,
-        // );
         }
 
 
@@ -155,7 +156,6 @@ mod escrow_accounts {
         msg!("Bet Placed!");
         Ok(())
     }
-    
     
 
     
